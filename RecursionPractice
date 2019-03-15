@@ -1,0 +1,192 @@
+// RecursionPractice.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include <iostream>
+
+using namespace std;
+
+//The following 2 declarations are used in problems 27, 28, 29
+/*1*/const int MAX_CAPACITY = 20;
+/*2*/typedef int ElementType;
+/*3*/typedef ElementType ArrayType;
+
+int getNumber()
+{
+	int n = 0;
+	cout << "Enter a number: ";
+	cin >> n;
+	return n;
+}
+
+
+int f(char ch1, char ch2, int &n)
+{
+	n++;
+	if (ch1 > ch2)
+		return 0;
+	if (ch1 + 1 == ch2)
+		return 1;
+	//else
+	cout << "Characters being returned ch1: " << static_cast<char>(ch1 + 1) << " , ch2: " << static_cast<char>(ch2 - 1) << endl;
+	return f(ch1 + 1, ch2 - 1, n) + 2;
+}
+
+unsigned problem21(unsigned n)
+{
+	if (n == 0)
+		return 0;
+	//else
+	return 1 + problem21(n / 10);
+}
+
+int problem23(int n)
+{
+	if (n < 10)
+		cout << n;
+	else
+	{
+		cout << (n % 10);
+		return problem23(n / 10);
+	}
+	
+}
+
+void reverseArray(ArrayType a[], int first, int last)
+//Reverse the contents of a[first], ... , a[last]
+{
+	if (last == first)
+		return;
+	else
+	{
+		cout << a[--last] << " ";
+		reverseArray(a, first, last);
+	}
+
+}
+
+int sumArray(ArrayType a[], int n)
+//Return the sum of a[0], ... , a[n-1]
+{
+	if (n == 0)
+		return 0;
+	//else
+	return a[n] + sumArray(a, --n);
+}
+
+int location(ArrayType a[], int first, int last, ElementType elm)
+//Return the location of elm in a[first], ..., a[last]
+{
+	if (first == last)
+		return 0;
+	if (elm != a[first])
+		location(a, first + 1, last, elm);
+	else
+		return first + 1;
+}
+
+int hailstone(int n)
+{
+	static int i = 0;
+	if (n == 1)
+		return i;
+	if (n % 2) //If n is odd, remainder != 0
+	{
+		hailstone(3 * n + 1);
+		i++;
+	}
+	else if (!(n % 2)) //If n is even, remainder is zero
+	{
+		hailstone(n / 2);
+		i++;
+	}
+		
+}
+
+void fillArray(int *p, int maxValue)
+{
+	if (maxValue == 0)
+		return;
+	else
+	{
+		*p = maxValue;
+		p--;
+		fillArray(p, maxValue - 1);
+	}
+}
+
+int main()
+{
+	/*cout << "Exercises 10.1 #7" << endl;
+	int num;
+	int count = 0;
+	num = f('a', 'e', count);
+	cout << num << endl;
+	cout << "coutn: " << count << endl;
+
+	count = 0;
+	num = f('h', 'c', count);
+	cout << num << endl;
+	cout << "count: " << count << endl;*/
+
+	cout << "PROBLEM 21" << endl;
+	int z = 0;
+	z = getNumber();
+	cout << "Number of digits in nonnegative integer 12345: " << problem21(z) << endl;
+	cout << endl;
+
+	cout << "PROBLEM 23" << endl;
+	z = getNumber();
+	problem23(z);
+	cout << endl;
+
+	cout << "PROBLEM 27" << endl;
+	cout << "Fill array with 1, 3, 5, 7, 9" << endl;
+	ElementType ary[MAX_CAPACITY];
+	ElementType *ptr;
+	ptr = &ary[MAX_CAPACITY-1];
+	fillArray(ptr, MAX_CAPACITY); //Fill array function for problem # 4
+	reverseArray(ary, 0, MAX_CAPACITY);
+	cout << endl;
+
+	cout << "PROBLEM 28" << endl;
+	cout << "Use Problem 27 array" << endl;
+	cout << "Sum of array: " << sumArray(ary, MAX_CAPACITY) << endl;
+	cout << endl;
+
+	cout << "PROBLEM 29" << endl;
+	cout << "Use Problem 27 array" << endl;
+	int value = 0, index = 0;
+	value = getNumber();
+	index = location(ary, 0, MAX_CAPACITY, value);
+	if (index)
+		cout << "The number " << value << " is located in index " << index << endl;
+	else
+		cout << "Value not found" << endl;
+	cout << endl;
+
+	cout << "2. HAILSTONES ALGORITHM" << endl;
+	int iterations = 0;
+	iterations = hailstone(getNumber());
+	cout << "It takes " << iterations << " iterations of the hailstone algorithm "
+		<< "for value to reach 1." << endl;
+	cout << endl;
+
+	cout << "3. Print out Linked List program in reverse recursively";
+	//Included in separate file
+	cout << "Included in separate file" << endl;
+	cout << endl;
+
+	cout << "4. Fill array of size 20 with values of 1-20" << endl;
+	// 'ElementType *ptr = &ary[MAX_CAPACITY];' declared on line 146
+	// fillArray(ptr, MAX_CAPACITY);
+	cout << "Function was utilized in problem 1, first used on line 148" << endl;
+	cout << endl;
+
+
+	
+
+	
+    return 0;
+}
+
