@@ -1,0 +1,158 @@
+//#include "stdafx.h" //include this header file when testing program on Visual Studios
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+struct crossReference
+{
+    string name[60];            //name of the variable or function
+    int defined[60];            //line was the variable or function defined on
+    int used[60];               //lines where variable or functions were used or referenced
+};
+
+void getData(string data[]);                    //reads conversionprogram.txt file into a string array
+crossReference getVariables(string data[], string s, int &j);     //extracts the variables and the line it's declared. Accepts string array, returns crossReference struct
+void getVariables(string data[], string s, string *nameptr, int *definedptr);
+string eraseComments(string temp);              //erases comments from a line in the program
+crossReference print(crossReference toPrint);             //displays and lines up the data
+crossReference getFunctions(string data[]);
+
+int main()
+{
+    string variableName[60];
+    string data[205];
+    crossReference variables;           //a struct for the variables used
+    crossReference functions;           //a struct for the functions used
+    getData(data);                      //reads text file into a string array
+    string s1 = "float";
+    string s2 = "int ";
+    string s3 = "char ";
+    string s4 = "long ";
+    int j = 0;
+    string *nameptr = variables.name;
+    int *definedptr = variables.defined;
+    getVariables(data, s1, nameptr, definedptr);     //function returns data to variables struct
+    getVariables(data, s2, nameptr, definedptr);
+    getVariables(data, s3, nameptr, definedptr);
+    getVariables(data, s4, nameptr, definedptr);
+//    variables = getVariables(data, s2, j);
+//    variables = getVariables(data, s3, j);
+//    variables = getVariables(data, s4, j);
+    variables = print(variables);
+    functions = getFunctions(data);
+
+
+
+    return 0;
+}
+
+void getData(string data[])
+{
+    ifstream infile;
+    infile.open("conversionprogram.txt");
+    string temp;
+    int i = 0;
+    while(infile.good())
+    {
+        getline(infile,temp); //reads in entire line to temp variable so the line number can be preserved
+        data[i] = temp;       //string data array now holds this line
+        i++;
+    }
+    return;
+}
+
+string eraseComments(string temp)
+{
+    int pos1 = 0, pos2 = 0;
+    int numOfCharErase = pos2 - pos1;
+    pos1 = temp.find("/*");      //finding the comments
+        if(pos1 != -1)
+        {
+            pos2 = temp.find("*/");
+            numOfCharErase = pos2 - pos1;
+            temp.erase(pos1,numOfCharErase+2);
+            return temp;
+        }
+        else
+            return temp;
+}
+
+
+
+void getVariables(string data[], string s, string *nameptr, int *definedptr)
+{
+    crossReference stemp;                 //struct temporary, value that will be returned
+    int i = 0;                            //iterator for data array
+    int found = 0;                        //used with string::find member function. Holds position of substring found within string
+    string temp;                          //string temporary, holds each line of text from data array
+    int position1 = 0, position2 = 0;     //used with find member function to find comments. Holds position of substring within string
+    int numOfCharErase = position2 - position1; //how long the comment is, how many characters to erase for string::erase member function.
+
+    for(i; i < 205; i++) //loops through data array
+    {
+        temp = data[i]; //temp variable holds value of data array element, makes code a little easier without having to use [i]
+        temp = eraseComments(temp); //erases comments on the same line, so .find doesn't look in comments for substring 's'
+        found = temp.find(s);       //returns -1 if substring 's' is not found
+//        if(s=="float")
+//            cout<<found<<"\n";
+        if(found != -1)
+        {
+            *nameptr = temp;   //stores variable declaration in struct
+            *definedptr = i;      //stores which line this variable was declared
+            nameptr++;
+            definedptr++;
+        }
+    }
+
+    return;
+}
+
+
+crossReference getFunctions(string data[])
+{
+    crossReference stemp;                 //struct temporary, value that will be returned
+    int i = 0;                            //iterator for data array
+    int j = 0;                            //iterator for stemp struct
+    int found = 0;                        //used with string::find member function. Holds position of substring found within string
+    string temp;                          //string temporary, holds each line of text from data array
+    string s = "void ";                   //substring which are variable types being searched for
+    int position1 = 0, position2 = 0;     //used with find member function to find comments. Holds position of substring within string
+    int numOfCharErase = position2 - position1; //how long the comment is, how many characters to erase for string::erase member function.
+
+    bool cont = true; //while true, continue
+    while(cont)
+    {
+        for(i; i < 205; i++) //loops through data array
+        {
+            temp = data[i]; //temp variable holds value of data array element, makes code a little easier without having to use [i]
+            temp = eraseComments(temp); //erases comments on the same line, so .find doesn't look in comments for substring 's'
+            found = temp.find(s);       //returns -1 if substring 's' is not found
+            if(found != -1)
+            {
+                stemp.name[j] = temp;   //stores variable declaration in struct
+                stemp.used[j] = i;      //stores which line this variable was declared
+                j++;
+            }
+        } i = 0;     //resets iterator to search through data array for different 's' substring
+}
+}
+
+crossReference print(crossReference toPrint)
+{
+    int pos = 0;
+    int i = 0;
+    while(!toPrint.name[i].empty()) //loop stops when struct element is empty
+    {
+        toPrint.name[i].erase(toPrint.name[i].length()-1, 1); //erases the last character in variable declaration, which is usually ';' or ','
+
+        pos = toPrint.name[i].find("\t"); //if variable declaration is tabbed over, get rid of the tab to make print line up
+        if(pos != -1)                     //.find returns -1 if '\t' is not found
+            toPrint.name[i].erase(pos, 1);//erase tab
+
+        cout << toPrint.name[i] << setw(30) << " declared on line " << toPrint.defined[i+1] << endl;
+        i++;
+    }
+    return toPrint;
+}
