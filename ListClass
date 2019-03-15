@@ -1,0 +1,330 @@
+#include "stdafx.h"
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+typedef int ElementType;
+const ElementType CAPACITY = 20;
+const ElementType DEFAULT_VALUE = 0;
+
+class List
+{
+private:
+
+	ElementType dataList[CAPACITY]; //array to hold data
+	int currentpos; //hold value of the currently active position
+	int numOfElements; //number of elements within the array
+
+	void createDataListArray()
+	{
+		for (currentpos; currentpos < CAPACITY; currentpos++)
+			dataList[currentpos] = DEFAULT_VALUE;
+	}
+
+	friend ostream& operator<<(ostream& os, const List& lst)
+	{
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			os << lst.dataList[i] << " ";
+		}
+		return os;
+	}
+
+public:
+	//Constructor
+	List()
+	{
+		first();
+		numOfElements = 0;
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			dataList[i] = DEFAULT_VALUE;
+		}
+	}
+	//Copy Constructor
+	List(const List &obj)
+	{
+		first();
+		numOfElements = obj.size();
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			dataList[i] = obj.dataList[i];
+		}
+	}
+
+	bool empty() //go back and for loop entire array to check if empty
+	{
+		if (dataList[0] == 0)
+			return true; //is empty
+		else
+			return false; //is not empty
+	}
+
+	void first()
+	{
+		currentpos = 0;
+	}
+
+	void last()
+	{
+		currentpos = numOfElements - 1;
+	}
+
+	void prev()
+	{
+		currentpos--;
+	}
+
+	void next()
+	{
+		if(currentpos < numOfElements - 1)
+			currentpos++;
+	}
+
+	ElementType getPos()
+	{
+		return currentpos;
+	}
+
+	void setPos(int position)
+	{
+		currentpos = position;
+	}
+
+	void insertBefore(int value)
+	{
+		/*temp++;
+		for (int i = CAPACITY-1; i >= currentpos; i--)
+			dataList[i + 1] = dataList[i];
+		dataList[currentpos] = value;
+		numOfElements = temp; //numofElements kept resetting when loop starts*/
+		for (int i = CAPACITY - 2; i >= currentpos; i--)
+			dataList[i + 1] = dataList[i];
+		dataList[currentpos] = value;
+		numOfElements++; //numofElements kept resetting when loop starts
+	}
+
+	void insertAfter(int value)
+	{
+		/*temp++;
+		for (int i = CAPACITY; i > currentpos; i--)
+			dataList[i + 1] = dataList[i];
+		dataList[currentpos + 1] = value;
+		numOfElements = temp; //numofElements kept resetting when loop starts*/
+		if (numOfElements == 0)//empty list
+			dataList[0] = value;
+		else
+		{
+			for (int i = CAPACITY - 2; i > currentpos; i--)
+				dataList[i + 1] = dataList[i];
+			dataList[currentpos + 1] = value;
+			currentpos++;
+		}
+		numOfElements++; //numofElements kept resetting when loop starts
+
+	}
+
+	ElementType getElement()
+	{
+		return dataList[currentpos];
+	}
+
+	int size() const
+	{
+		return numOfElements;
+	}
+
+	void replace(ElementType value)
+	{
+		dataList[currentpos] = value;
+	}
+
+	void erase()
+	{
+		dataList[currentpos] = 0;
+		numOfElements--;
+	}
+
+	void clear()
+	{
+		numOfElements = 0;
+		createDataListArray();
+	}
+
+	void operator = (const List &right)
+	{
+		first();
+		numOfElements = right.size();
+		for (currentpos; currentpos < CAPACITY; currentpos++)
+		{
+			dataList[currentpos] = right.dataList[currentpos];
+		}
+	}
+
+	bool operator == (const List &right)
+	{
+		bool status;
+
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			if (dataList[i] == right.dataList[i])
+				status = true;
+			else
+				status = false;
+		}
+		return status;
+	}
+
+};
+
+int main()
+{
+	List a, b;  int endit;
+
+	for (int i = 1; i <= 20; i++)
+		a.insertAfter(i * 2);
+	cout << "List a : " << endl; //array should be filled [2,4,6,...]
+	cout << "  " << a << endl;
+	cout << "Number of elements in a - " << a.size() << endl;
+
+	for (int i = 1; i <= 20; i++)
+		b.insertBefore(i * 2);
+	cout << "List b : " << endl;
+	cout << "  " << b << endl;
+	cout << "Number of elements in b - " << b.size() << endl;
+
+	if (a == b)
+		cout << "List a & b are equal" << endl;
+	else
+		cout << "List a & b are Not equal" << endl;
+
+	a.first();
+	b.first();
+	cout << "First elmenet in list a & b: " << a.getElement() << ", "
+		<< b.getElement() << endl;
+	for (int i = 0; i < a.size(); a.next(), i++);
+	for (int i = 0; i < b.size(); b.next(), i++);
+	cout << "Last elmenet in list a & b: " << a.getElement() << ", "
+		<< b.getElement() << endl;
+	cout << endl << endl << " Start of new stuff" << endl;
+
+	cout << "a = " << a << endl;
+	cout << "b = " << b << endl;
+
+	a.first();
+	b.first();
+	endit = a.size() / 2;
+	for (int i = 1; i < endit; i++)
+	{
+		a.next();
+		b.next();
+	}
+
+	a.last();
+	b.last();
+	a.insertAfter(100);
+	a.insertBefore(99);
+	cout << " Test last " << endl;
+	cout << "a = " << a << endl;
+	cout << "b = " << b << endl;
+
+	cout << "New position in Obj 'a' position = " << a.size() / 2 << endl;
+
+	for (int i = 1; i<8; i++)
+	{
+		a.erase();
+		b.replace(i);
+	}
+
+	cout << "Modified Object 'a' " << endl;
+	cout << "List a: " << a << endl;
+
+	List c(b);
+	cout << "Copy Constructor c(b)" << endl;
+	cout << "List b : " << b << endl;
+	cout << "List c : " << c << endl;
+
+	if (c == b)
+		cout << "List c & b are equal" << endl;
+	else
+		cout << "List c & b are Not equal" << endl;
+
+
+	List e;
+	e = c;
+	cout << "Object 'c' assigned to Object 'e':" << endl;
+	cout << "List c : " << c << endl;
+	cout << "List e : " << e << endl;
+
+	List d;
+	d = a;
+	d.first();
+	endit = d.size() / 2;
+	for (int i = 1; i <= endit; i++)
+	{
+		d.next();
+		d.erase();
+	}
+	cout << "Results after some erases: Object d  " << endl;
+	cout << "List d : " << d << endl;
+
+	d.first();
+	endit = d.size();
+	for (int i = 1; i < endit; d.next(), i++)
+	{
+		d.insertBefore(d.getElement() * 3);
+		d.next();
+	}
+	cout << "Results after some Replaces on d " << endl;
+	cout << "List d : " << d << endl;
+
+	a.first();
+	endit = a.size();
+	for (int i = 1; i < endit; a.next(), i++)
+	{
+		a.insertBefore(a.getPos() + a.getElement());
+		a.next();
+		a.erase();
+	}
+	cout << "Results after some weird stuff on list a" << endl;
+	cout << "List a : " << a << endl;
+
+	List alist(b);
+	alist.clear();
+	for (int i = 1; i <= 10; i++)
+		alist.insertAfter(i);
+	alist.first();
+	cout << "New List alist with positions above: " << endl;
+	for (int i = 1; i <= 10; i++) {
+		cout << setw(5) << alist.getPos();
+		alist.next();
+	}
+	cout << endl;
+	alist.first();
+	for (int i = 1; i <= 10; i++) {
+		cout << setw(5) << alist.getElement();
+		alist.next();
+	}
+	cout << endl;
+
+	List newa;
+	for (int i = 1; i <= 20; i++)
+		newa.insertAfter(i * 3);
+	cout << "List alist and newa before swap " << endl;
+	cout << " " << alist << endl;
+	cout << " " << newa << endl;
+
+	cout << endl << "  check out boundary conditions" << endl;
+	List sq;
+	cout << "number of elements in empty sq list = " << sq.size() << endl;
+	sq.first();
+	sq.erase();
+	cout << "empty sq values " << sq << endl;
+	sq.insertBefore(999);
+	cout << "sq values " << sq << endl;
+	sq.next(); sq.next();
+	cout << "sq.getElement() = " << sq.getElement() << endl;
+	cout << "sq values " << sq << endl;
+	system("pause");   //This statement not needed in code blocks, just VS.
+	return 0;
+}
