@@ -1,0 +1,84 @@
+// Trees.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+struct tnode {
+	int val;
+	tnode *lchild;
+	tnode *rchild;
+};
+
+tnode *root; //first node in a tree, similar to head of a linked list
+
+tnode *myNewNode()
+{
+	tnode *t;
+	t = new tnode;
+	t->lchild = NULL;
+	t->rchild = NULL;
+	return t;
+}
+
+
+void insert(tnode* c, int target)
+{
+	//we need to have another pointer, a previous pointer, to keep track of the parent
+	tnode *p; //previous pointer
+	p = NULL;
+
+	while (c)
+	{
+		p = c;
+		if (target < c->val)
+			c = c->lchild;
+		else
+			c = c->rchild;
+	}
+	c = myNewNode();
+	c->val = target;
+	while (root != NULL)
+	{
+		if (target < p->val)
+			c = c->lchild;
+		else
+			c = c->rchild;
+	}
+	
+	return;
+}
+
+void print(tnode *r)
+{
+	if (r == NULL)
+		return;
+	print(r->lchild);
+	cout << r->val;
+	print(r->rchild);
+
+	return;
+}
+
+
+int main()
+{
+	ifstream inFile;
+	inFile.open("C://Users//Thuy//Desktop//372 Data Structures//Trees//Trees//test.txt");
+	int num;
+
+	while (inFile)
+	{
+		inFile >> num;
+		insert(root, num);
+	}
+
+	print(root);
+
+	inFile.close();
+
+    return 0;
+}
+
