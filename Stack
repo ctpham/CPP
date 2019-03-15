@@ -1,0 +1,238 @@
+// Stack.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include <iostream>
+using namespace std;
+typedef int ElementType;
+const ElementType CAPACITY = 20;
+const ElementType DEFAULT_VALUE = 0;
+
+class List
+{
+private:
+
+	ElementType dataList[CAPACITY]; //array to hold data
+	int currentpos; //hold value of the currently active position
+	int numOfElements; //number of elements within the array
+
+	void createDataListArray()
+	{
+		for (currentpos; currentpos < CAPACITY; currentpos++)
+			dataList[currentpos] = DEFAULT_VALUE;
+	}
+
+	friend ostream& operator<<(ostream& os, const List& lst)
+	{
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			os << lst.dataList[i] << " ";
+		}
+		return os;
+	}
+
+public:
+	//Constructor
+	List()
+	{
+		first();
+		numOfElements = 0;
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			dataList[i] = DEFAULT_VALUE;
+		}
+	}
+	//Copy Constructor
+	List(const List &obj)
+	{
+		first();
+		numOfElements = obj.size();
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			dataList[i] = obj.dataList[i];
+		}
+	}
+
+	bool empty() //go back and for loop entire array to check if empty
+	{
+		if (dataList[0] == 0)
+			return true; //is empty
+		else
+			return false; //is not empty
+	}
+
+	void first()
+	{
+		currentpos = 0;
+	}
+
+	void last()
+	{
+		currentpos = numOfElements - 1;
+	}
+
+	void prev()
+	{
+		currentpos--;
+	}
+
+	void next()
+	{
+		if (currentpos < numOfElements - 1)
+			currentpos++;
+	}
+
+	ElementType getPos()
+	{
+		return currentpos;
+	}
+
+	void setPos(int position)
+	{
+		currentpos = position;
+	}
+
+	void insertBefore(int value)
+	{
+		/*temp++;
+		for (int i = CAPACITY-1; i >= currentpos; i--)
+		dataList[i + 1] = dataList[i];
+		dataList[currentpos] = value;
+		numOfElements = temp; //numofElements kept resetting when loop starts*/
+		for (int i = CAPACITY - 2; i >= currentpos; i--)
+			dataList[i + 1] = dataList[i];
+		dataList[currentpos] = value;
+		numOfElements++; //numofElements kept resetting when loop starts
+	}
+
+	void insertAfter(int value)
+	{
+		/*temp++;
+		for (int i = CAPACITY; i > currentpos; i--)
+		dataList[i + 1] = dataList[i];
+		dataList[currentpos + 1] = value;
+		numOfElements = temp; //numofElements kept resetting when loop starts*/
+		if (numOfElements == 0)//empty list
+			dataList[0] = value;
+		else
+		{
+			for (int i = CAPACITY - 2; i > currentpos; i--)
+				dataList[i + 1] = dataList[i];
+			dataList[currentpos + 1] = value;
+			currentpos++;
+		}
+		numOfElements++; //numofElements kept resetting when loop starts
+
+	}
+
+	ElementType getElement()
+	{
+		return dataList[currentpos];
+	}
+
+	int size() const
+	{
+		return numOfElements;
+	}
+
+	void replace(ElementType value)
+	{
+		dataList[currentpos] = value;
+	}
+
+	void erase()
+	{
+		dataList[currentpos] = 0;
+		numOfElements--;
+	}
+
+	void clear()
+	{
+		numOfElements = 0;
+		createDataListArray();
+	}
+
+	void operator = (const List &right)
+	{
+		first();
+		numOfElements = right.size();
+		for (currentpos; currentpos < CAPACITY; currentpos++)
+		{
+			dataList[currentpos] = right.dataList[currentpos];
+		}
+	}
+
+	bool operator == (const List &right)
+	{
+		bool status;
+
+		for (int i = 0; i < CAPACITY; i++)
+		{
+			if (dataList[i] == right.dataList[i])
+				status = true;
+			else
+				status = false;
+		}
+		return status;
+	}
+
+};
+
+class Stack
+{
+private:
+	int top; 
+	List currentStack;
+public:
+	Stack()
+	{
+		top = 0;
+		currentStack.setPos(top);
+	}
+	
+	void push(int value)
+	{
+		currentStack.setPos(top++);
+		currentStack.insertBefore(value);
+	}
+	int pop()
+	{
+		currentStack.setPos(top--);
+		currentStack.erase();
+	}
+	int size()
+	{
+		return currentStack.size();
+	}
+
+	bool empty()
+	{
+		if (top == 0)
+			return true; //is empty
+		else
+			return false; //is not empty
+	}
+
+	void print()
+	{
+		cout << currentStack;
+	}
+};
+
+int main()
+{
+	Stack A;
+
+	cout << "Input values for stack A: ";
+	ElementType input = 0;
+	while (input != -1)
+	{
+		cin >> input;
+		A.push(input);
+	}
+	cout << "The values for stack A: " << endl;
+	A.print();
+
+    return 0;
+}
+
