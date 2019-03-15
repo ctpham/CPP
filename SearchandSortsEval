@@ -1,0 +1,344 @@
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+
+
+
+using namespace std;
+
+struct table
+{
+    string header[5];
+    int data[6][5];
+};
+
+void fillcharset(char charset[]);
+string generateRandomString(char charset[]); //generates one random string
+void moreRandomStrings(string *randomStringList, char charset[], int sets);
+void selectionSort(string randomStringList[], int sets);
+void bubbleSort(string randomStringsList[], int sets);
+int searchList(string *randomStringList, int sets);
+int binarySearch(string *randomStringList, int sets);
+void fillTableHeader(table &results);
+void fillTableData(table &results, int r, int c, int timer);
+
+int main()
+{
+    char charset[52];
+    char *charptr;
+    charptr = charset;
+    string *randomStringsList;
+    int probes = 0, row = 0, column = 0;
+    table results;
+    clock_t start, finish;
+    double timer;
+    fillcharset(charptr);
+
+
+    randomStringsList = new string[1000];
+    generateRandomString(charset);
+
+    fillTableHeader(results); //fills the table with headers
+
+
+    cout << start << " time begin" << endl;
+    moreRandomStrings(randomStringsList, charset, 1000);
+    start = clock();
+    selectionSort(randomStringsList, 1000);
+    finish = clock();
+    fillTableData(results, 0, 2, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+    start = clock();
+    bubbleSort(randomStringsList, 1000);
+    finish = clock();
+    fillTableData(results, 0, 1, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+
+
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[3000];
+    moreRandomStrings(randomStringsList, charset, 3000);
+    start = clock();
+    selectionSort(randomStringsList, 3000);
+    finish = clock();
+    //timer = (static_cast<double>(finish - start)/CLOCKS_PER_SEC);  //time for selection sort of 3000 random strings
+    fillTableData(results, 1, 2, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+
+    randomStringsList = new string[5000];
+    moreRandomStrings(randomStringsList, charset, 5000);
+    start = clock();
+    selectionSort(randomStringsList, 5000);
+    finish = clock();
+    //timer = (static_cast<double>(finish - start)/CLOCKS_PER_SEC);  //time for selection sort of 5000 random strings
+    fillTableData(results, 2, 2, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[7000];
+    moreRandomStrings(randomStringsList, charset, 7000);
+    selectionSort(randomStringsList, 7000);
+    finish = clock();
+    //timer = (static_cast<double>(finish - start)/CLOCKS_PER_SEC);  //time for selection sort of 7000 random strings
+    fillTableData(results, 3, 2, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[9000];
+    moreRandomStrings(randomStringsList, charset, 9000);
+    selectionSort(randomStringsList, 9000);
+    finish = clock();
+    //timer = (static_cast<double>(finish - start)/CLOCKS_PER_SEC);  //time for selection sort of 9000 random strings
+    fillTableData(results, 4, 2, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[11000];
+    moreRandomStrings(randomStringsList, charset, 11000);
+    selectionSort(randomStringsList, 11000);
+    finish = clock();
+    //timer = (static_cast<double>(finish - start)/CLOCKS_PER_SEC); //time for selection sort of 11000 random strings
+    fillTableData(results, 5, 2, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+    start = clock();
+    cout << start << " bubble time begin" << endl;
+    randomStringsList = new string[1000];
+    moreRandomStrings(randomStringsList, charset, 1000);
+    bubbleSort(randomStringsList, 1000);
+    finish = clock();
+    fillTableData(results, 0, 1, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[3000];
+    moreRandomStrings(randomStringsList, charset, 3000);
+    bubbleSort(randomStringsList, 3000);
+    finish = clock();
+    fillTableData(results, 1, 1, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[5000];
+    moreRandomStrings(randomStringsList, charset, 5000);
+    bubbleSort(randomStringsList, 5000);
+    finish = clock();
+    fillTableData(results, 2, 1, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[7000];
+    moreRandomStrings(randomStringsList, charset, 7000);
+    bubbleSort(randomStringsList, 7000);
+    finish = clock();
+    fillTableData(results, 3, 1, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[9000];
+    moreRandomStrings(randomStringsList, charset, 9000);
+    bubbleSort(randomStringsList, 9000);
+    finish = clock();
+    fillTableData(results, 4, 1, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+    start = clock();
+    cout << start << " time begin" << endl;
+    randomStringsList = new string[11000];
+    moreRandomStrings(randomStringsList, charset, 11000);
+    bubbleSort(randomStringsList, 11000);
+    finish = clock();
+    fillTableData(results, 5, 1, (static_cast<double>(finish - start)/CLOCKS_PER_SEC));
+
+
+//    for(int i = 0; i < sets; i++) //for debug
+//       cout << randomStringsList[i] << endl;
+
+    randomStringsList = new string[11000];
+    moreRandomStrings(randomStringsList, charset, 11000);
+    cout << "linear search starts" ;
+    probes = searchList(randomStringsList, 11000);
+    cout << " probes" << probes;
+
+
+    start = clock();
+    randomStringsList = new string[11000];
+    moreRandomStrings(randomStringsList, charset, 11000);
+    probes = binarySearch(randomStringsList, 11000);
+    finish = clock();
+    timer = (static_cast<double>(finish - start)/CLOCKS_PER_SEC);
+    cout << timer << "binary random time taken" << endl;
+
+
+    return 0;
+}
+
+void fillcharset(char *charptr)
+{
+    for(char i = 65; i <= 122; i++)
+    {
+        if(!(i >= 91 && i <= 96))
+        {
+            *charptr = i;
+            charptr++;
+        }
+    }
+//  for(int i = 0; i < 52; i++) //for debug
+//      cout << charset[i];
+    return;
+}
+
+string generateRandomString(char charset[])
+{
+    string randomstr;
+    char randomndx;
+    for(int i = 1; i <= 15; i++) //random string 15 characters in length
+    {
+        randomndx = rand() % 52;
+        randomstr = randomstr + charset[randomndx]; //concatenate a char to the string being built
+    }
+    //cout << randomstr << endl; //for debug
+
+return randomstr;
+}
+
+
+void moreRandomStrings(string *randomStringList, char charset[], int sets)
+{
+    for(int i = 0; i < sets; i++)
+    {
+        randomStringList[i] = generateRandomString(charset);
+        //cout << randomStringList[i] << endl; //for debug
+    }
+
+    return;
+}
+
+void selectionSort(string randomStringList[], int sets)
+{
+    string minValue;
+    int startScan, minIndex;
+    for(startScan = 0; startScan < (sets - 1); startScan++)
+    {
+        minIndex = startScan;
+        minValue = randomStringList[startScan];
+        for(int index = startScan + 1; index < sets; index++)
+        {
+            if(randomStringList[index] < minValue)
+            {
+                minValue = randomStringList[index];
+                minIndex = index;
+            }
+        }
+        randomStringList[minIndex] = randomStringList[startScan];
+        randomStringList[startScan] = minValue;
+    }
+    return;
+}
+
+void bubbleSort(string randomStringsList[], int sets)
+{
+    bool swap;
+    string temp;
+    do
+    {
+        swap = false;
+        for(int i = 0; i < (sets - 1); i++)
+        {
+            if(randomStringsList[i] > randomStringsList[i+1])
+            {
+                temp = randomStringsList[i];
+                randomStringsList[i] = randomStringsList[i + 1];
+                randomStringsList[i + 1] = temp;
+                swap = true;
+            }
+        }
+    } while(swap);
+    return;
+}
+
+int searchList(string *randomStringsList, int sets)
+{
+    int index = 0;
+    int position = -1;
+    int counter = 0;
+    bool found = false;
+
+    for(int i = 0; i < 3000; i++)
+    {
+        index = rand() % 11000;
+        for(int j = 0; j < sets; j++)
+        {
+            while(!found)
+            {
+                if(randomStringsList[index] == randomStringsList[j])
+                {
+                    found = true;
+                    position = index;
+                    counter++;
+                }
+            }
+        }
+    }
+    return counter;
+}
+
+int binarySearch(string *randomStringsList, int sets)
+{
+    int first = 0,
+        last = sets - 1,
+        middle,
+        position = -1;
+    int index = 0, counter = 0;
+    bool found = false;
+
+    for(int i = 0; i < 3000; i++)
+    {
+        index = rand() % 11000;
+        while (!found && first <= last)
+        {
+            middle = (first + last) / 2;
+            if(randomStringsList[middle] == randomStringsList[index])
+            {
+                found == true;
+                position = middle;
+                counter++;
+            }
+            else if(randomStringsList[middle] > randomStringsList[index])
+                last = middle - 1;
+            else
+                first = middle + 1;
+        }
+    }
+    return counter;
+}
+
+void fillTableHeader(table &results)
+{
+    for(int i = 0; i < 5; i++)
+    {
+        switch(i)
+        {
+            case 0: results.header[i] = "Number of Strings";
+                  break;
+            case 1: results.header[i] = "Bubble Sort Time";
+                  break;
+            case 2: results.header[i] = "Selection Sort Time";
+                  break;
+            case 3: results.header[i] = "Linear Search Probes";
+                  break;
+            case 4: results.header[i] = "Binary Search Probes";
+                  break;
+            default: cerr << "Error loading headers.";
+        }
+
+
+    }
+
+    return;
+}
+
+void fillTableData(table &results, int r, int c, int timer)
+{
+    results.data[r][c] = timer;
+    return;
+}
