@@ -1,0 +1,321 @@
+#include <iostream>
+#include <cstring>
+#include <string>
+
+using namespace std;
+
+int strLength(char* s1);
+void prtStringBackwards(char s1[], int length); //#2 accepts c-string, prints string backwards
+void replaceSubstring(char str1[], char str2[], char str3[], int length);
+void replaceSubstring(string str1, string str2, string str3); //overloaded function
+
+void getPassword(char pw[]); //#5. enter password to be verified
+bool verifyLength(char pw[]); //#5 verify password bu checking length
+bool verifyCase(const char* pw); // at least one upper and lowercase letter
+bool verifyDigit(const char* pw); //at least one digit
+void prtPasswordVerification(char pw[], bool l, bool c, bool d);
+
+string getPassword(); //#5. enter password to be verified
+bool verifyLength(string pw); //#5 verify password bu checking length
+bool verifyCase(string pw); // at least one upper and lowercase letter
+bool verifyDigit(string pw); //at least one digit
+void prtPasswordVerification(string pw, bool l, bool c, bool d);
+
+void wordSeparator(char strA[], char strB[]);
+
+
+int main()
+{
+    char s1[] = "This is a test string for string length";
+    int length = 0;
+
+    length = strLength(s1);
+    cout << "1. String Length: \"This is a test string for string length\" has "
+         << length << " characters" << endl;
+
+    char* ptr;
+    ptr = s1;
+    cout << "2. Print \"This is a test string for string length\" backwards: ";
+    prtStringBackwards(ptr, length);
+    cout << endl;
+
+    char str1[] = "the dog jumped over the fence";
+    char str2[] = "the";
+    char str3[] = "that";
+    length = strLength(str3);
+    replaceSubstring(str1, str2, str3, length);
+    cout << "3. Replace \"the\" with \"that\" in \"the dog jumped over the fence\":" << endl;
+    for(int i = 0; i < strLength(str1); i++)
+        cout << str1[i];
+    cout << endl;
+
+    char Str1[] = "Sid likes to eat nuts but the brother, Sidney likes to eat fruit. One time Sid put a pecan in Sidney's banana and boy hidey did Sid get a chuckle out of Sidney's misfortune";
+    char Str2[] = "Sid";
+    char Str3[] = "Mikey";
+    length = strLength(Str3);
+    replaceSubstring(Str1, Str2, Str3, length);
+    cout << "3. Replace \"Sid\" with \"Mikey\" in \"Sid likes to eat nuts but the brother, " << endl;
+    cout << "Sidney likes to eat fruit. One time Sid put a pecan in Sidney's banana and boy " << endl;
+    cout << "hidey did Sid get a chuckle out of Sidney's misfortune\":" << endl;
+    for(int i = 0; i < strLength(Str1); i++)
+        cout << Str1[i];
+    cout << endl;
+
+    string classstr1, classstr2, classstr3;
+    classstr1 = "the dog jumped over the fence";
+    classstr2 = "the";
+    classstr3 = "that";
+    replaceSubstring(classstr1, classstr2, classstr3);
+    cout << "4. " << classstr1;
+
+    string Classstr1, Classstr2, Classstr3;
+    Classstr1 = "Sid likes to eat nuts but the brother, Sidney likes to eat fruit. One time Sid put a pecan in Sidney's banana and boy hidey did Sid get a chuckle out of Sidney's misfortune";
+    Classstr2 = "Sid ";
+    Classstr3 = "Mikey ";
+    replaceSubstring(Classstr1, Classstr2, Classstr3);
+    cout << "4. " << Classstr1 << endl;
+
+    bool l, c, d; //results of verification length, case, and digit functions
+    char pw[20];
+    //char* ptr = NULL;
+    ptr = pw;
+    //int *ptr = NULL;
+    bool again = true;
+    while(again)
+    {
+        getPassword(pw);
+        l = verifyLength(pw);
+        c = verifyCase(ptr);
+        d = verifyDigit(ptr);
+        prtPasswordVerification(pw, l, c, d);
+        cout << "Create another password? Enter 1 for YES, 0 for NO: ";
+        cin >> again;
+    }
+
+    string classpw;
+    again = true;
+    while(again)
+    {
+        classpw = getPassword();
+        l = verifyLength(classpw);
+        c = verifyCase(classpw);
+        d = verifyDigit(classpw);
+        prtPasswordVerification(classpw, l, c, d);
+        cout << "Create another password? Enter 1 for YES, 0 for NO: ";
+        cin >> again;
+    }
+
+    char strA[200] = "SidLikesToEatNutsButTheBrother,SidneyLikesToEatFruit.OneTimeSidPutAPecanInSidney'sBananaAndBoyHideyDidSidGetAChuckleOutOfSidney'sMisfortune";
+    char strB[200];
+    wordSeparator(strA, strB);
+    int i = 0;
+    strlwr(strB);
+    cout << "7. ";
+    while (strB[i] != 0)
+    {
+        if(strB[i] == '.')
+            strB[i+2] = toupper(strB[i+2]);
+        cout << strB[i];
+        i++;
+    }
+
+    return 0;
+}
+
+void prtStringBackwards(char s1[], int length)
+{
+    for (length; length >= 0; length--)
+    {
+        cout << s1[length];
+    }
+    return;
+}
+
+int strLength(char* s1)
+{
+    int length = 0;
+
+    while(*s1 != '\0')
+    {
+        s1++;
+        length++;
+    }
+    return length;
+}
+
+void replaceSubstring(char str1[], char str2[], char str3[], int length)
+{
+    char* subptr = NULL; //pointer to occurence of str2 in str1
+    subptr = strstr(str1, str2);
+    while(subptr != NULL)
+    {
+        for(int i = 0; i < length; i++)
+        {
+            *subptr = str3[i];
+            subptr++;
+        }
+
+        subptr = strstr(str1, str2);
+    }
+    return;
+}
+
+void replaceSubstring(string str1, string str2, string str3)
+{
+    int position = 0;
+    int length = 0;
+
+    position = str1.find(str2);
+    length = str2.length();
+
+    while (position != -1) //if substring is not found, npos is returned with a value of -1
+    {
+        str1.replace(position,length, str3);
+        position = str1.find(str2);
+
+    }
+    return;
+}
+
+void getPassword(char pw[])
+{
+//    int* ptr;
+//    ptr = pw;
+//    char pw[] = "";
+    cout << "5. Create a new password: ";
+    cin.ignore(20, '\n');
+    cin.getline(pw, 20);
+    //for(int i = 0; i < 20; i++)
+       // cout << pw[i]; //for debug to make sure password read in correctly
+    return;
+}
+
+bool verifyLength(char pw[])
+{
+    if(strLength(pw) >= 7)
+        return true;
+    else
+        return false;
+}
+
+bool verifyCase(const char* ptr)
+{
+    int countUpper = 0, countLower = 0;
+    const char *endptr = ptr;
+    endptr += 20;
+
+    for(ptr; ptr < endptr; ptr++)
+    {
+        if(isupper(*ptr))
+            countUpper++;
+        if(islower(*ptr))
+            countLower++;
+    }
+    if(countUpper >= 1 && countLower >= 1)
+        return true;
+    else
+        return false;
+}
+
+bool verifyDigit(const char* ptr)
+{
+    int countDigit = 0;
+    const char* endptr = ptr;
+    endptr += 20;
+
+    for(ptr; ptr < endptr; ptr++)
+    {
+        if(isdigit(*ptr))
+            countDigit++;
+    }
+
+    if(countDigit >= 1)
+        return true;
+    else
+        return false;
+}
+
+void prtPasswordVerification(char pw[], bool l, bool c, bool d)
+{
+    if (!l)
+        cout << "Password must be at least seven characters long." << endl;
+    if(!c)
+        cout << "Password must contain at least one upper and one lower case letter." << endl;
+    if(!d)
+        cout << "Password must contain at least one digit." << endl;
+    else if(l == true && c == true && d == true)
+        cout << "Password created." << endl;
+    return;
+}
+
+string getPassword()
+{
+    string pw;
+    cout << "6. Create a new password: ";
+    cin >> pw;
+
+    return pw;
+}
+
+bool verifyLength(string pw)
+{
+    if(pw.length() >= 7)
+        return true;
+    else
+        return false;
+}
+
+bool verifyCase(string pw)
+{
+    const char* ptr;
+    ptr = pw.c_str();
+    if(verifyCase(ptr))
+        return true;
+    else
+        return false;
+}
+
+bool verifyDigit(string pw)
+{
+    const char* ptr;
+    ptr = pw.c_str();
+    if(verifyDigit(ptr))
+        return true;
+    else
+        return false;
+}
+
+void prtPasswordVerification(string pw, bool l, bool c, bool d)
+{
+    if (!l)
+        cout << "Password must be at least seven characters long." << endl;
+    if(!c)
+        cout << "Password must contain at least one upper and one lower case letter." << endl;
+    if(!d)
+        cout << "Password must contain at least one digit." << endl;
+    else if(l == true && c == true && d == true)
+        cout << "Password created." << endl;
+    return;
+}
+
+void wordSeparator(char strA[], char strB[])
+{
+    strB[0] = strA[0];
+    int j = 1;
+    for(int i = 0; i < 200; i++)
+    {
+        if(islower(strA[i]))
+        {
+            strB[j] = strA[i];
+            j++;
+        }
+        else
+        {
+            strB[j] = ' ';
+            strB[j+1] = strA[i];
+            j+=2;
+        }
+    }
+
+    return;
+}
